@@ -3,9 +3,9 @@ package android.example.com.uicommunication;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
-import android.example.com.uicommunication.framework.ActivityLifecycle;
-import android.example.com.uicommunication.framework.EventListener;
-import android.example.com.uicommunication.framework.EventReceiver;
+import com.talk4date.android.lifecycle.ActivityLifecycle;
+import com.talk4date.android.lifecycle.EventListener;
+import com.talk4date.android.lifecycle.EventReceiver;
 import android.example.com.uicommunication.service.RandomNumberService;
 import android.os.Bundle;
 import android.view.View;
@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
 		button = (Button) findViewById(R.id.button);
 
 		final EventReceiver<Integer> randomNumberListener = ActivityLifecycle
-				.sessionLifecylce(this)
+				.activitySessionLifecylce(this)
 				.registerListener("randomNumber", true, new EventListener<Integer>() {
 					@Override
 					public void onEvent(Integer number) {

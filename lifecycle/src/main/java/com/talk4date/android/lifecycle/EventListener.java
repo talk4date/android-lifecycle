@@ -1,4 +1,4 @@
-package android.example.com.uicommunication.framework;
+package com.talk4date.android.lifecycle;
 
 /**
  * A simple event listener that receives events of a specific type.

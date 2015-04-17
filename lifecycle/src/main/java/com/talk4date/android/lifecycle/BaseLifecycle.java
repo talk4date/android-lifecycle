@@ -1,4 +1,4 @@
-package android.example.com.uicommunication.framework;
+package com.talk4date.android.lifecycle;
 
 import java.util.HashMap;
 import java.util.LinkedList;

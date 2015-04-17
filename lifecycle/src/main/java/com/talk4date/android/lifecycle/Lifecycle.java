@@ -1,4 +1,4 @@
-package android.example.com.uicommunication.framework;
+package com.talk4date.android.lifecycle;
 
 /**
  * A lifecycle for events.

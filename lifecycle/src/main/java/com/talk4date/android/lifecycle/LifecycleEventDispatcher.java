@@ -1,8 +1,5 @@
-package android.example.com.uicommunication.framework;
+package com.talk4date.android.lifecycle;
 
-import android.example.com.uicommunication.framework.EventListener;
-import android.example.com.uicommunication.framework.EventReceiver;
-import android.example.com.uicommunication.framework.Lifecycle;
 import android.support.annotation.Nullable;
 
 import org.slf4j.Logger;

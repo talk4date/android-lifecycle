@@ -1,6 +1,6 @@
 package android.example.com.uicommunication.service;
 
-import android.example.com.uicommunication.framework.EventReceiver;
+import com.talk4date.android.lifecycle.EventReceiver;
 import android.os.Handler;
 import android.os.Looper;
 
