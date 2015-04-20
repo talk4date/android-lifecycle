@@ -1,4 +1,4 @@
-package android.example.com.uicommunication;
+package com.talk4date.android.lifecycle;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
