@@ -18,7 +18,8 @@
         </activity>
 
 		<activity android:name="com.talk4date.android.lifecycle.sample.activity.SingleRandomNumberActivity" />
-		<activity android:name="com.talk4date.android.lifecycle.sample.activity.TimingActivity" />
+		<activity android:name=".activity.TimingSessionLifecycleActivity" />
+		<activity android:name=".activity.TimingActivity" />
     </application>
 
 </manifest>

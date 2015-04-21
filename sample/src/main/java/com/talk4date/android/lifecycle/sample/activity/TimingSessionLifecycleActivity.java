@@ -2,6 +2,7 @@ package com.talk4date.android.lifecycle.sample.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.widget.TextView;
 
 import com.talk4date.android.lifecycle.ActivityLifecycle;
@@ -12,12 +13,12 @@ import com.talk4date.android.lifecycle.sample.service.TimingService;
 
 /**
  * Activity which shows the elapsed time since the timing service was created.
- * It uses the simple ActivityLifecycle and discards events while in backgorund.
+ * It uses the session lifecycle and drops events while paused.
  *
  * FIXME: There is currently no way to unregister the receiver when the lifecycle is destroyed.
  * We need a lifecycle destroy event.
  */
-public class TimingActivity extends Activity {
+public class TimingSessionLifecycleActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class TimingActivity extends Activity {
 		setContentView(R.layout.activity_timing);
 		final TextView timeLabel = (TextView) findViewById(R.id.elapsedTime);
 
-		ActivityLifecycle lifecycle = ActivityLifecycle.activityLifecycle(this);
+		ActivityLifecycle lifecycle = ActivityLifecycle.activitySessionLifecylce(this);
 		EventReceiver<Long> timeListener = lifecycle.registerListener("time", false, new EventListener<Long>() {
 			@Override
 			public void onEvent(Long time) {
@@ -33,7 +34,10 @@ public class TimingActivity extends Activity {
 			}
 		});
 
-		// since we are in the short lifecycle, we need to re-register on every create
-		TimingService.getInstance().addReceiver(timeListener);
+		// FIXME: still a problem when the process is killed
+		// We need to implement `isRestored()` on the ActivityLifecycle
+		if (savedInstanceState == null) {
+			TimingService.getInstance().addReceiver(timeListener);
+		}
 	}
 }

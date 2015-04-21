@@ -21,12 +21,19 @@ public class MainActivity extends Activity {
 		new Example(
 			"Single Random Number",
 			"Fetches a random number on start and a new one every time the button is pressed",
-			SingleRandomNumberActivity.class),
+			SingleRandomNumberActivity.class
+		),
 
 		new Example(
-			"Timing Service",
-			"Updates a label with the time past since a service was created",
-			TimingActivity.class
+				"Timing Service Short Lifecycle",
+				"Updates a label with the time past since a service was created. Uses the short Acitvity Lifecylce.",
+				TimingActivity.class
+		),
+
+		new Example(
+			"Timing Service Session Lifecycle",
+			"Updates a label with the time past since a service was created. Uses the session ActivityLifecycle.",
+			TimingSessionLifecycleActivity.class
 		)
 	};
 
