@@ -17,8 +17,8 @@
             </intent-filter>
         </activity>
 
-		<activity android:name="com.talk4date.android.lifecycle.sample.activity.SingleRandomNumberActivity">
-		</activity>
+		<activity android:name="com.talk4date.android.lifecycle.sample.activity.SingleRandomNumberActivity" />
+		<activity android:name="com.talk4date.android.lifecycle.sample.activity.TimingActivity" />
     </application>
 
 </manifest>

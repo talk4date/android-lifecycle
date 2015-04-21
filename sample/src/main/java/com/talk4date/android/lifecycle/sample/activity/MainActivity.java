@@ -21,7 +21,13 @@ public class MainActivity extends Activity {
 		new Example(
 			"Single Random Number",
 			"Fetches a random number on start and a new one every time the button is pressed",
-			SingleRandomNumberActivity.class)
+			SingleRandomNumberActivity.class),
+
+		new Example(
+			"Timing Service",
+			"Updates a label with the time past since a service was created",
+			TimingActivity.class
+		)
 	};
 
 	@Override
