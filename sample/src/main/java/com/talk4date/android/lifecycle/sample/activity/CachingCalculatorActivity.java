@@ -26,6 +26,9 @@ public class CachingCalculatorActivity extends Activity {
 		setContentView(R.layout.activity_caching_calculator);
 		final TextView resultView = (TextView) findViewById(R.id.result);
 
+		// Since the service caches the result we can use the short lived lifecycle
+		// and we don't need to store anything in instance state.
+		// We just request the result from the service all the time.
 		ActivityLifecycle lifecycle = ActivityLifecycle.activityLifecycle(this);
 		EventReceiver<Integer> resultListener = lifecycle.registerListener("result", true, new EventListener<Integer>() {
 			@Override
