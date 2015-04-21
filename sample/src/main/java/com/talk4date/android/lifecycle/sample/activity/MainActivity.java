@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.talk4date.android.lifecycle.sample.R;
+import com.talk4date.android.lifecycle.sample.service.CachingCalculatorService;
 
 /**
  * Activity that lists all examples.
@@ -26,14 +27,23 @@ public class MainActivity extends Activity {
 
 		new Example(
 				"Timing Service Short Lifecycle",
-				"Updates a label with the time past since a service was created. Uses the short Acitvity Lifecylce.",
+				"Updates a label with the time past since a service was created. " +
+						"Uses the short Acitvity Lifecylce.",
 				TimingActivity.class
 		),
 
 		new Example(
 			"Timing Service Session Lifecycle",
-			"Updates a label with the time past since a service was created. Uses the session ActivityLifecycle.",
+			"Updates a label with the time past since a service was created. " +
+					"Uses the session ActivityLifecycle.",
 			TimingSessionLifecycleActivity.class
+		),
+
+		new Example(
+			"Caching Calculator",
+			"After a long running calculation updates a label. " +
+					"The result of the calculation is cached in the service.",
+			CachingCalculatorActivity.class
 		)
 	};
 
