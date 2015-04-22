@@ -2,7 +2,6 @@ package com.talk4date.android.lifecycle.sample.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.widget.TextView;
 
 import com.talk4date.android.lifecycle.ActivityLifecycle;
@@ -26,7 +25,7 @@ public class TimingSessionLifecycleActivity extends Activity {
 		setContentView(R.layout.activity_timing);
 		final TextView timeLabel = (TextView) findViewById(R.id.elapsedTime);
 
-		ActivityLifecycle lifecycle = ActivityLifecycle.activitySessionLifecylce(this);
+		ActivityLifecycle lifecycle = ActivityLifecycle.activitySessionLifecycle(this);
 		EventReceiver<Long> timeListener = lifecycle.registerListener("time", false, new EventListener<Long>() {
 			@Override
 			public void onEvent(Long time) {

@@ -70,7 +70,7 @@ public class SingleRandomNumberActivity extends Activity {
 		log.trace("onCreate activity {}", id);
 
 		// Get the activity session lifecycle for this activity.
-		ActivityLifecycle lifecycle = ActivityLifecycle.activitySessionLifecylce(this);
+		ActivityLifecycle lifecycle = ActivityLifecycle.activitySessionLifecycle(this);
 
 		setContentView(R.layout.activity_single_random_number);
 
