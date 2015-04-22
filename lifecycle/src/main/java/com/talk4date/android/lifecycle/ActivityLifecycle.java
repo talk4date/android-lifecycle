@@ -32,7 +32,7 @@ public class ActivityLifecycle extends BaseLifecycle {
 	 *
 	 * @param activity The activity for which to get the activity session lifecycle.
 	 */
-	public static ActivityLifecycle activitySessionLifecylce(Activity activity) {
+	public static ActivityLifecycle activitySessionLifecycle(Activity activity) {
 		return lifecycle(activity, true, TAG_ACTIVITY_SESSION_LIFECYCLE_FRAGMENT);
 	}
 

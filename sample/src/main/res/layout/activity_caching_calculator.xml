@@ -1,0 +1,31 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:scrollbars="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:layout_margin="10dp">
+
+	<TextView
+		android:text="The calculation happens in the background.\nFor example it could be done on a server."
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:layout_marginTop="10dp"/>
+
+	<TextView
+		android:text="16 + 35 = "
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:layout_marginTop="20dp"/>
+
+	<TextView
+		android:id="@+id/result"
+		android:text="wait a moment, crunching numbers ..."
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:layout_marginTop="10dp"/>
+</LinearLayout>
