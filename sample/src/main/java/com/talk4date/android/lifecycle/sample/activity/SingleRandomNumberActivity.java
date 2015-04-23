@@ -95,7 +95,6 @@ public class SingleRandomNumberActivity extends Activity {
 					log.debug("listener of activity {} executing", id);
 
 					lastResult = number;
-
 					bindView();
 
 					// We can even create a fragment transaction without further handling.
@@ -115,15 +114,10 @@ public class SingleRandomNumberActivity extends Activity {
 			lastResult = savedInstanceState.getInt(INSTANCE_STATE_LAST_RESULT);
 		}
 
-		// We only kick off to get the first random number when this is a completely new Activity.
-		// When restored from instance state (eg. on rotation change) we don't want to send a second request.
-		// The lifecycle will make sure that no events are lost.
-		// If the application was killed between restores, we might have lost events, (this is the `isRestored` check),
-		// then we have to request a new random number, because the old one was lost.
-		if (lifecycle.isNew()) {
-			if (lastResult == null) {
-				randomNumberService.getOneRandomNumber(5, randomNumberListener);
-			}
+		// We only kick off to get the first random number when the lifecycle
+		// is new or restored  and we don't have a result yet.
+		if (lifecycle.isNewOrRestored() && lastResult == null) {
+			randomNumberService.getOneRandomNumber(5, randomNumberListener);
 		}
 		bindView();
 	}
