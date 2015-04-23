@@ -27,7 +27,6 @@ public class MessageDialogFragment extends DialogFragment {
 	@Override
 	public android.app.Dialog onCreateDialog(Bundle savedInstanceState) {
 		return new AlertDialog.Builder(getActivity())
-				.setTitle("Random")
 				.setMessage(getArguments().getString(ARG_MESSAGE)).create();
 	}
 }

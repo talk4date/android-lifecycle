@@ -9,7 +9,7 @@
 				tools:context=".MainActivity">
 
 	<TextView
-		android:text="Generating first number in progress ..."
+		android:text="Hit the button below to start some long running action."
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:id="@+id/text"
@@ -19,7 +19,7 @@
 	<Button
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Generate new Number"
+		android:text="Send data to server"
 		android:id="@+id/button"
 		android:layout_below="@+id/text"
 		android:layout_centerHorizontal="true"

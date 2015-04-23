@@ -21,6 +21,7 @@
 		<activity android:name=".activity.TimingSessionLifecycleActivity" />
 		<activity android:name=".activity.TimingActivity" />
 		<activity android:name=".activity.CachingCalculatorActivity" />
+		<activity android:name=".activity.UserBlockingActivity" />
     </application>
 
 </manifest>

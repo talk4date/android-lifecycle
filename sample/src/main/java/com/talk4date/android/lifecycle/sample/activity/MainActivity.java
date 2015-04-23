@@ -44,6 +44,12 @@ public class MainActivity extends Activity {
 			"After a long running calculation updates a label. " +
 					"The result of the calculation is cached in the service.",
 			CachingCalculatorActivity.class
+		),
+
+		new Example(
+			"User Blocking Sender",
+			"Send some data to a fake server and block the user until it is finished.",
+			UserBlockingActivity.class
 		)
 	};
 

@@ -18,8 +18,20 @@ import org.slf4j.LoggerFactory;
  */
 public class ActivityLifecycle extends BaseLifecycle {
 
+	private static final Logger log = LoggerFactory.getLogger(ActivityLifecycle.class);
+
 	private static final String TAG_ACTIVITY_SESSION_LIFECYCLE_FRAGMENT = "ACTIVITY_SESSION_LIFECYCLE_FRAGMENT";
 	private static final String TAG_ACTIVITY_LIFECYCLE_FRAGMENT = "ACTIVITY_LIFECYCLE_FRAGMENT";
+
+	/**
+	 * @see #isRestored()
+	 */
+	private boolean restored = false;
+
+	/**
+	 * Flag indicating if this lifecycle was created for the current activity.
+	 */
+	private boolean newLifecycle = true;
 
 	/**
 	 * Private constructor. Use #sessionLifecylce to obtain instances.
@@ -52,12 +64,59 @@ public class ActivityLifecycle extends BaseLifecycle {
 
 		if (fragment == null) {
 			fragment = new ActivitySessionLifecycleFragment().withRetention(retain);
+			fragment.restoredFromFragmentState = false;
+			fragment.lifecycle.setNew(true);
 			activity.getFragmentManager().beginTransaction()
 					.add(fragment, tag)
 					.commit();
+		} else {
+			if (retain && !fragment.attachedToOriginalActivity) {
+				fragment.lifecycle.setNew(false);
+				if (fragment.restoredFromFragmentState) {
+					log.info("Fragment recovered from instance state.");
+					fragment.restoredFromFragmentState = false;
+
+					// we lost our old object instances.
+					fragment.lifecycle.setRestored(true);
+				} else {
+					fragment.lifecycle.setRestored(false);
+				}
+			}
 		}
 
 		return fragment.lifecycle;
+	}
+
+
+	/**
+	 * Lifecycle was was restored - the session was resumed although the process was destroyed and recreated.
+	 * If this is true, we might have lost events, because we store events only within the process.
+	 */
+	public boolean isRestored() {
+		return restored;
+	}
+
+	private void setRestored(boolean restored) {
+		this.restored = restored;
+	}
+
+	/**
+	 * Lifecycle was just created for the currently active activity.
+	 */
+	public boolean isNew() {
+		return newLifecycle;
+	}
+
+	private void setNew(boolean newInstance) {
+		this.newLifecycle = newInstance;
+	}
+
+	/**
+	 * This method allows callers to have one method to check if callback objects might have been lost.
+	 * @return true if either {@link #isNew()} or {@link #isRestored()} is true.
+	 */
+	public boolean isNewOrRestored() {
+		return isNew() || isRestored();
 	}
 
 	/**
@@ -69,16 +128,19 @@ public class ActivityLifecycle extends BaseLifecycle {
 
 		ActivityLifecycle lifecycle = new ActivityLifecycle();
 
+		private boolean restoredFromFragmentState = true;
+
 		/**
-		 * If the lifecycle fragment should be retained across configuration changes.
+		 * Flag indicating that we are still associated with the activity for which we were originally created.
+		 * ie. Once we have been detached, this flag will be false.
 		 */
-		private boolean retain = false;
+		private boolean attachedToOriginalActivity = true;
 
 		/**
 		 * Configure if the lifecycle fragment should be retained across configuration changes.
 		 */
 		public ActivitySessionLifecycleFragment withRetention(boolean retention) {
-			this.retain = retention;
+			setRetainInstance(retention);
 			return this;
 		}
 
@@ -92,7 +154,6 @@ public class ActivityLifecycle extends BaseLifecycle {
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			setRetainInstance(retain);
 			log.trace("onCreate -> activating");
 			lifecycle.setActive(true);
 		}
@@ -116,6 +177,7 @@ public class ActivityLifecycle extends BaseLifecycle {
 			super.onDetach();
 			log.trace("detach -> invalidating event listeners");
 			lifecycle.invalidateEventListeners();
+			attachedToOriginalActivity = false;
 		}
 	}
 }

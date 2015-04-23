@@ -33,9 +33,9 @@ public class TimingSessionLifecycleActivity extends Activity {
 			}
 		});
 
-		// FIXME: still a problem when the process is killed
-		// We need to implement `isRestored()` on the ActivityLifecycle
-		if (savedInstanceState == null) {
+		// When the activity lifecycle was just created for this activity instance and we have not been restored,
+		// we have to register our receiver.
+		if (lifecycle.isNewOrRestored()) {
 			TimingService.getInstance().addReceiver(timeListener);
 		}
 	}

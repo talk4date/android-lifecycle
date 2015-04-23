@@ -39,6 +39,8 @@ public class SingleRandomNumberActivity extends Activity {
 
 	private static final Logger log = LoggerFactory.getLogger(SingleRandomNumberActivity.class);
 
+	private static final String INSTANCE_STATE_LAST_RESULT = "lastResult";
+
 	/**
 	 * Total number of activities created (only for debug output).
 	 */
@@ -64,6 +66,11 @@ public class SingleRandomNumberActivity extends Activity {
 	 */
 	private Button button;
 
+	/**
+	 * The last result we received, which will be displayed in the UI.
+	 */
+	private Integer lastResult;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -87,9 +94,9 @@ public class SingleRandomNumberActivity extends Activity {
 					// we can do all view related tasks without taking care.
 					log.debug("listener of activity {} executing", id);
 
-					// We can directly access the textView.
-					// The lifecycle makes sure that this is only executed on the active instance.
-					textView.setText("Random: " + number);
+					lastResult = number;
+
+					bindView();
 
 					// We can even create a fragment transaction without further handling.
 					// The lifecycle makes sure that this will only be executed while resumed.
@@ -104,12 +111,40 @@ public class SingleRandomNumberActivity extends Activity {
 			}
 		});
 
+		if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_STATE_LAST_RESULT)) {
+			lastResult = savedInstanceState.getInt(INSTANCE_STATE_LAST_RESULT);
+		}
+
 		// We only kick off to get the first random number when this is a completely new Activity.
 		// When restored from instance state (eg. on rotation change) we don't want to send a second request.
 		// The lifecycle will make sure that no events are lost.
-		if (savedInstanceState == null) {
-			randomNumberService.getOneRandomNumber(5, randomNumberListener);
+		// If the application was killed between restores, we might have lost events, (this is the `isRestored` check),
+		// then we have to request a new random number, because the old one was lost.
+		if (lifecycle.isNew()) {
+			if (lastResult == null) {
+				randomNumberService.getOneRandomNumber(5, randomNumberListener);
+			}
 		}
+		bindView();
 	}
 
+	/**
+	 * Binds the view with the lastResult.
+	 */
+	private void bindView() {
+		if (lastResult == null) {
+			return;
+		}
+		// We can directly access the textView.
+		// The lifecycle makes sure that this is only executed on the active instance.
+		textView.setText("Random: " + lastResult);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (lastResult != null) {
+			outState.putInt(INSTANCE_STATE_LAST_RESULT, lastResult);
+		}
+	}
 }
