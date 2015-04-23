@@ -59,56 +59,49 @@ public class ActivityLifecycle extends BaseLifecycle {
 	}
 
 	private static ActivityLifecycle lifecycle(Activity activity, boolean retain, String tag) {
-		ActivitySessionLifecycleFragment fragment = (ActivitySessionLifecycleFragment)
+		ActivityLifecycleFragment fragment = (ActivityLifecycleFragment)
 				activity.getFragmentManager().findFragmentByTag(tag);
 
 		if (fragment == null) {
-			fragment = new ActivitySessionLifecycleFragment().withRetention(retain);
+			fragment = new ActivityLifecycleFragment().withRetention(retain);
 			fragment.restoredFromFragmentState = false;
-			fragment.lifecycle.setNew(true);
+			fragment.lifecycle.newLifecycle = true;
 			activity.getFragmentManager().beginTransaction()
 					.add(fragment, tag)
 					.commit();
-		} else {
-			if (retain && !fragment.attachedToOriginalActivity) {
-				fragment.lifecycle.setNew(false);
-				if (fragment.restoredFromFragmentState) {
-					log.info("Fragment recovered from instance state.");
-					fragment.restoredFromFragmentState = false;
+		} else if (retain && !fragment.configured) {
+			// fragment already existed, but wasn't configured for this activity yet
 
-					// we lost our old object instances.
-					fragment.lifecycle.setRestored(true);
-				} else {
-					fragment.lifecycle.setRestored(false);
-				}
+			// fragment existed, lifecycle must be old
+			fragment.lifecycle.newLifecycle = false;
+
+			if (fragment.restoredFromFragmentState) {
+				fragment.restoredFromFragmentState = false;
+				fragment.lifecycle.restored = true;
+			} else {
+				fragment.lifecycle.restored = false;
 			}
 		}
 
+		fragment.configured = true;
+		log.trace("lifecycle fragment {}", fragment);
 		return fragment.lifecycle;
 	}
 
 
 	/**
-	 * Lifecycle was was restored - the session was resumed although the process was destroyed and recreated.
+	 * Indicates if the lifecycle was restored - the session was resumed although the process was destroyed and recreated.
 	 * If this is true, we might have lost events, because we store events only within the process.
 	 */
 	public boolean isRestored() {
 		return restored;
 	}
 
-	private void setRestored(boolean restored) {
-		this.restored = restored;
-	}
-
 	/**
-	 * Lifecycle was just created for the currently active activity.
+	 * Lifecycle was just created for the currently active activity instance.
 	 */
 	public boolean isNew() {
 		return newLifecycle;
-	}
-
-	private void setNew(boolean newInstance) {
-		this.newLifecycle = newInstance;
 	}
 
 	/**
@@ -120,26 +113,28 @@ public class ActivityLifecycle extends BaseLifecycle {
 	}
 
 	/**
-	 * Fragment that holds and controls the ActivitySessionLifecycle
+	 * Fragment that holds and controls the activity lifecycle.
 	 */
-	public static class ActivitySessionLifecycleFragment extends Fragment {
+	public static class ActivityLifecycleFragment extends Fragment {
 
 		private static final Logger log = LoggerFactory.getLogger(ActivityLifecycle.class);
 
 		ActivityLifecycle lifecycle = new ActivityLifecycle();
 
+		/**
+		 * Whether the fragment was restored by the system or created ourselves.
+		 */
 		private boolean restoredFromFragmentState = true;
 
 		/**
-		 * Flag indicating that we are still associated with the activity for which we were originally created.
-		 * ie. Once we have been detached, this flag will be false.
+		 * Flag indicating if the fragment has been configured for this activity instance.
 		 */
-		private boolean attachedToOriginalActivity = true;
+		private boolean configured = false;
 
 		/**
 		 * Configure if the lifecycle fragment should be retained across configuration changes.
 		 */
-		public ActivitySessionLifecycleFragment withRetention(boolean retention) {
+		public ActivityLifecycleFragment withRetention(boolean retention) {
 			setRetainInstance(retention);
 			return this;
 		}
@@ -177,7 +172,15 @@ public class ActivityLifecycle extends BaseLifecycle {
 			super.onDetach();
 			log.trace("detach -> invalidating event listeners");
 			lifecycle.invalidateEventListeners();
-			attachedToOriginalActivity = false;
+			configured = false;
+		}
+
+		@Override
+		public String toString() {
+			return "ActivityLifecycleFragment { \n"
+					+ "retained: " + getRetainInstance() + ", "
+					+ "restoredFromFragmentState: " + restoredFromFragmentState + ", "
+					+ "configured: " + configured + " }";
 		}
 	}
 }
