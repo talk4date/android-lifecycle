@@ -31,12 +31,13 @@ public class UserBlockingActivity extends Activity {
 		ActivityLifecycle lifecycle = ActivityLifecycle.activitySessionLifecycle(this);
 
 		this.button = (Button)findViewById(R.id.button);
+		this.dialog = (MessageDialogFragment) getFragmentManager().findFragmentByTag(TAG_DIALOG);
 
 		final EventReceiver<Void> sendDataListener = lifecycle
 				.registerListener("sendData", true, new EventListener<Void>() {
 					@Override
 					public void onEvent(Void event) {
-						// Dialog must not be null, otherwise something very bad happened.
+						// Dialog can't be null here
 						dialog.dismiss();
 					}
 				});
@@ -52,7 +53,8 @@ public class UserBlockingActivity extends Activity {
 			}
 		});
 
-		dialog = (MessageDialogFragment) getFragmentManager().findFragmentByTag(TAG_DIALOG);
+		// When the lifecycle is restored, we'll never get the response we are waiting for.
+		// Therefore we need to close our dialog to unblock the user.
 		if (lifecycle.isRestored() && dialog != null) {
 			dialog.dismiss();
 		}
