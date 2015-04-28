@@ -1,4 +1,4 @@
-package com.talk4date.android.lifecycle.sample.activity;
+package com.talk4date.android.lifecycle.sample;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.talk4date.android.lifecycle.sample.R;
+import com.talk4date.android.lifecycle.sample.activity.CachingCalculatorActivity;
+import com.talk4date.android.lifecycle.sample.activity.SingleRandomNumberActivity;
+import com.talk4date.android.lifecycle.sample.activity.TimingActivity;
+import com.talk4date.android.lifecycle.sample.activity.TimingSessionLifecycleActivity;
+import com.talk4date.android.lifecycle.sample.activity.UserBlockingActivity;
 import com.talk4date.android.lifecycle.sample.fragment.FragmentAttachment;
 import com.talk4date.android.lifecycle.sample.service.CachingCalculatorService;
 

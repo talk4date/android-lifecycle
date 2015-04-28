@@ -3,6 +3,7 @@ package com.talk4date.android.lifecycle.sample;
 import android.app.Application;
 
 import com.talk4date.android.lifecycle.callbacks.FragmentLifecycleDispatcher;
+import com.talk4date.android.lifecycle.util.FragmentLifecycle;
 import com.talk4date.android.lifecycle.util.FragmentLifecycleLoggingCallbacks;
 
 /**
@@ -13,6 +14,8 @@ public class SampleApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		FragmentLifecycleDispatcher.get().addFragmentLifecycleCallbacks(new FragmentLifecycleLoggingCallbacks());
+		FragmentLifecycleDispatcher fragmentDispatcher = FragmentLifecycleDispatcher.get();
+		fragmentDispatcher.addFragmentLifecycleCallbacks(new FragmentLifecycleLoggingCallbacks());
+		fragmentDispatcher.addFragmentLifecycleCallbacks(FragmentLifecycle.getCallbacks());
 	}
 }

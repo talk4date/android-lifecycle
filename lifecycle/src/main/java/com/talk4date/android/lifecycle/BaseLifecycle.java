@@ -7,6 +7,7 @@ import java.util.Map;
 
 /**
  * Abstract base class for implementing lifecycles.
+ * Implements event dispatching and listener registration.
  */
 public abstract class BaseLifecycle implements Lifecycle {
 
