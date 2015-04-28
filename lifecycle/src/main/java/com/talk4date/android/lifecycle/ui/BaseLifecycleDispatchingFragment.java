@@ -1,4 +1,4 @@
-package com.talk4date.android.lifecycle.util;
+package com.talk4date.android.lifecycle.ui;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -8,98 +8,98 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.talk4date.android.lifecycle.callbacks.FragmentLifecycleDispatcher;
 
 /**
- * Simple base fragment which logs TRACE logs for all lifecycle methods.
+ * Base Fragment that dispatches all events to the {@link com.talk4date.android.lifecycle.callbacks.FragmentLifecycleDispatcher}.
  */
-public class LifecycleLoggingFragment extends Fragment {
+public class BaseLifecycleDispatchingFragment extends Fragment  {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private FragmentLifecycleDispatcher dispatcher = FragmentLifecycleDispatcher.get();
 
 	@Override
 	public void onAttach(Activity activity) {
-		logger.trace("onAttach");
 		super.onAttach(activity);
+		dispatcher.onFragmentAttach(this, activity);
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		logger.trace("onCreate");
 		super.onCreate(savedInstanceState);
+		dispatcher.onFragmentCreate(this, savedInstanceState);
 	}
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		logger.trace("onCreateView");
-		return super.onCreateView(inflater, container, savedInstanceState);
+		View view = super.onCreateView(inflater, container, savedInstanceState);
+		dispatcher.onFragmentCreateView(this, inflater, container, savedInstanceState);
+		return view;
 	}
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
-		logger.trace("onViewCreated");
 		super.onViewCreated(view, savedInstanceState);
+		dispatcher.onFragmentViewCreated(this, view, savedInstanceState);
 	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
-		logger.trace("onActivityCreated");
 		super.onActivityCreated(savedInstanceState);
+		dispatcher.onFragmentActivityCreated(this, savedInstanceState);
 	}
 
 	@Override
 	public void onViewStateRestored(Bundle savedInstanceState) {
-		logger.trace("onViewStateRestored");
 		super.onViewStateRestored(savedInstanceState);
+		dispatcher.onFragmentViewStateRestored(this, savedInstanceState);
 	}
 
 	@Override
 	public void onStart() {
-		logger.trace("onStart");
 		super.onStart();
+		dispatcher.onFragmentStart(this);
 	}
 
 	@Override
 	public void onResume() {
-		logger.trace("onResume");
 		super.onResume();
+		dispatcher.onFragmentResume(this);
 	}
 
 	@Override
 	public void onPause() {
-		logger.trace("onPause");
 		super.onPause();
+		dispatcher.onFragmentResume(this);
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
-		logger.trace("onSaveInstanceState");
 		super.onSaveInstanceState(outState);
+		dispatcher.onFragmentSaveInstanceState(this, outState);
 	}
 
 	@Override
 	public void onStop() {
-		logger.trace("onStop");
 		super.onStop();
+		dispatcher.onFragmentStop(this);
 	}
 
 	@Override
 	public void onDestroyView() {
-		logger.trace("onDestroyView");
 		super.onDestroyView();
+		dispatcher.onFragmentDestroyView(this);
 	}
 
 	@Override
 	public void onDestroy() {
-		logger.trace("onDestroy");
 		super.onDestroy();
+		dispatcher.onFragmentDestroy(this);
 	}
 
 	@Override
 	public void onDetach() {
-		logger.trace("onDetach");
 		super.onDetach();
+		dispatcher.onFragmentDetach(this);
 	}
 }

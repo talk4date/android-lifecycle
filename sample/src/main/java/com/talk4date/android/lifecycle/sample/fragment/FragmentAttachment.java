@@ -10,9 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.talk4date.android.lifecycle.Lifecycle;
 import com.talk4date.android.lifecycle.sample.R;
-import com.talk4date.android.lifecycle.util.LifecycleLoggingFragment;
+import com.talk4date.android.lifecycle.ui.BaseLifecycleDispatchingFragment;
 
 /**
  * Fragment attach / reattach demo.
@@ -56,11 +55,13 @@ public class FragmentAttachment extends Activity {
 		});
 	}
 
-	public static class SimpleFragment extends LifecycleLoggingFragment {
+	public static class SimpleFragment extends BaseLifecycleDispatchingFragment {
 
 		@Nullable
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			super.onCreateView(inflater, container, savedInstanceState);
+
 			TextView textView = new TextView(getActivity());
 			textView.setText("I'm the fragment");
 			return textView;
