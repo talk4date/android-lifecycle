@@ -70,7 +70,7 @@ public class BaseLifecycleDispatchingFragment extends Fragment  {
 	@Override
 	public void onPause() {
 		super.onPause();
-		dispatcher.onFragmentResume(this);
+		dispatcher.onFragmentPause(this);
 	}
 
 	@Override

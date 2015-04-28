@@ -1,6 +1,7 @@
 package com.talk4date.android.lifecycle.sample;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,11 +13,13 @@ import android.widget.TextView;
 
 import com.talk4date.android.lifecycle.sample.R;
 import com.talk4date.android.lifecycle.sample.activity.CachingCalculatorActivity;
+import com.talk4date.android.lifecycle.sample.activity.FragmentHostingActivity;
 import com.talk4date.android.lifecycle.sample.activity.SingleRandomNumberActivity;
 import com.talk4date.android.lifecycle.sample.activity.TimingActivity;
 import com.talk4date.android.lifecycle.sample.activity.TimingSessionLifecycleActivity;
 import com.talk4date.android.lifecycle.sample.activity.UserBlockingActivity;
 import com.talk4date.android.lifecycle.sample.fragment.FragmentAttachment;
+import com.talk4date.android.lifecycle.sample.fragment.SingleRandomNumberFragment;
 import com.talk4date.android.lifecycle.sample.service.CachingCalculatorService;
 
 /**
@@ -26,43 +29,49 @@ public class MainActivity extends Activity {
 
 	private static Example[] examples = new Example[] {
 		new Example(
-			"Single Random Number",
+			"Activity: Single Random Number",
 			"Fetches a random number on start and a new one every time the button is pressed",
 			SingleRandomNumberActivity.class
 		),
 
 		new Example(
-				"Timing Service Short Lifecycle",
-				"Updates a label with the time past since a service was created. " +
-						"Uses the short Acitvity Lifecylce.",
-				TimingActivity.class
+			"Activity:Timing Service Short Lifecycle",
+			"Updates a label with the time past since a service was created. " +
+					"Uses the short Acitvity Lifecylce.",
+			TimingActivity.class
 		),
 
 		new Example(
-			"Timing Service Session Lifecycle",
+			"Activity: Timing Service Session Lifecycle",
 			"Updates a label with the time past since a service was created. " +
 					"Uses the session ActivityLifecycle.",
 			TimingSessionLifecycleActivity.class
 		),
 
 		new Example(
-			"Caching Calculator",
+			"Activity: Caching Calculator",
 			"After a long running calculation updates a label. " +
 					"The result of the calculation is cached in the service.",
 			CachingCalculatorActivity.class
 		),
 
 		new Example(
-			"User Blocking Sender",
+			"Activity: User Blocking Sender",
 			"Send some data to a fake server and block the user until it is finished.",
 			UserBlockingActivity.class
 		),
 
 		new Example(
-			"Fragment Exploration",
+			"Activity: Fragment Exploration",
 			"Tests out adding, removing and re-creating fragments.",
 			FragmentAttachment.class
-		)
+		),
+
+		new Example(
+			"Fragment: Single Random Number",
+			"Fetches a random number on start and a new one every time the button is pressed",
+			SingleRandomNumberFragment.class
+		),
 	};
 
 	@Override
@@ -81,11 +90,20 @@ public class MainActivity extends Activity {
 		public final String title;
 		public final String description;
 		public final Class<? extends Activity> activity;
+		public final Class<? extends Fragment> fragment;
 
-		public Example(String label, String description, Class<? extends Activity> activity) {
+		@SuppressWarnings("unchecked")
+		public Example(String label, String description, Class<?> fragmentOrActivity) {
 			this.title = label;
-			this.activity = activity;
 			this.description = description;
+
+			if (Fragment.class.isAssignableFrom(fragmentOrActivity)) {
+				this.fragment = (Class<? extends Fragment>) fragmentOrActivity;
+				this.activity = null;
+			} else {
+				this.activity = (Class<? extends Activity>) fragmentOrActivity;
+				this.fragment = null;
+			}
 		}
 	}
 
@@ -133,8 +151,16 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			Intent launchActivity = new Intent(v.getContext(), example.activity);
-			v.getContext().startActivity(launchActivity);
+			Intent launchExampleIntent = null;
+
+			if (example.activity != null) {
+				launchExampleIntent = new Intent(v.getContext(), example.activity);
+			} else if (example.fragment != null) {
+				launchExampleIntent = new Intent(v.getContext(), FragmentHostingActivity.class);
+				launchExampleIntent.putExtra(FragmentHostingActivity.EXTRA_FRAGMENT_CLASS, example.fragment.getCanonicalName());
+			}
+
+			v.getContext().startActivity(launchExampleIntent);
 		}
 	}
 }

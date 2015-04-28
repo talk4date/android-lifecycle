@@ -95,8 +95,9 @@ public class FragmentLifecycle extends ActivityBasedLifecycle {
 					throw new IllegalArgumentException("Missing fragment id in instance state of fragment.");
 				}
 
-				FragmentLifecycle lifecycle;
+				fragmentToId.put(fragment, id);
 
+				FragmentLifecycle lifecycle;
 				// existing lifecycle
 				if (idToSessionLifecycle.containsKey(id)) {
 					lifecycle = idToSessionLifecycle.get(id);

@@ -57,21 +57,25 @@ public class SingleRandomNumberFragment extends BaseLifecycleDispatchingFragment
 			lastResult = savedInstanceState.getInt(INSTANCE_STATE_LAST_RESULT);
 		}
 
-		randomNumberReceiver = FragmentLifecycle
-				.fragmentSessionLifecycle(this)
-				.registerListener("randomNumber", true, new EventListener<Integer>() {
-					@Override
-					public void onEvent(Integer number) {
-						lastResult = number;
-						bindView();
-					}
-				});
+		FragmentLifecycle lifecycle = FragmentLifecycle.fragmentSessionLifecycle(this);
+
+		randomNumberReceiver = lifecycle.registerListener("randomNumber", true, new EventListener<Integer>() {
+			@Override
+			public void onEvent(Integer number) {
+				lastResult = number;
+				bindView();
+			}
+		});
+
+		if (lifecycle.isNewOrRestored() && lastResult == null) {
+			RandomNumberService.getInstance().getOneRandomNumber(5, randomNumberReceiver);
+		}
 	}
 
 	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.activity_single_random_number, container);
+		View view = inflater.inflate(R.layout.activity_single_random_number, container, false);
 		this.textView = (TextView) view.findViewById(R.id.text);
 		this.button = (Button) view.findViewById(R.id.button);
 

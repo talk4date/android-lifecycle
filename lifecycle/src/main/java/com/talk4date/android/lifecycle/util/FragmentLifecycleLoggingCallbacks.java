@@ -21,7 +21,7 @@ public class FragmentLifecycleLoggingCallbacks implements FragmentLifecycleCallb
 
 	private void log(Fragment fragment, String event) {
 		if (logger.isTraceEnabled()) {
-			logger.trace("{}: {}", fragment.getClass(), event);
+			logger.trace("{}: {}", fragment, event);
 		}
 	}
 
