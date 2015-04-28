@@ -1,9 +1,8 @@
-package com.talk4date.android.lifecycle.util;
+package com.talk4date.android.lifecycle;
 
 import android.app.Fragment;
 import android.os.Bundle;
 
-import com.talk4date.android.lifecycle.ActivityBasedLifecycle;
 import com.talk4date.android.lifecycle.callbacks.AbstractFragmentLifecycleCallbacks;
 import com.talk4date.android.lifecycle.callbacks.FragmentLifecycleCallbacks;
 

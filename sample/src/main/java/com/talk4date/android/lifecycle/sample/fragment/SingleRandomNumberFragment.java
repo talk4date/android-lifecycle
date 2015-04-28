@@ -13,7 +13,7 @@ import com.talk4date.android.lifecycle.EventReceiver;
 import com.talk4date.android.lifecycle.sample.R;
 import com.talk4date.android.lifecycle.sample.service.RandomNumberService;
 import com.talk4date.android.lifecycle.ui.BaseLifecycleDispatchingFragment;
-import com.talk4date.android.lifecycle.util.FragmentLifecycle;
+import com.talk4date.android.lifecycle.FragmentLifecycle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
