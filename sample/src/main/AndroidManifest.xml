@@ -22,6 +22,7 @@
 		<activity android:name=".activity.TimingActivity" />
 		<activity android:name=".activity.CachingCalculatorActivity" />
 		<activity android:name=".activity.UserBlockingActivity" />
+		<activity android:name=".fragment.FragmentAttachment" />
     </application>
 
 </manifest>

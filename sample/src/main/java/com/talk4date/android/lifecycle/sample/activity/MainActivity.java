@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.talk4date.android.lifecycle.sample.R;
+import com.talk4date.android.lifecycle.sample.fragment.FragmentAttachment;
 import com.talk4date.android.lifecycle.sample.service.CachingCalculatorService;
 
 /**
@@ -50,6 +51,12 @@ public class MainActivity extends Activity {
 			"User Blocking Sender",
 			"Send some data to a fake server and block the user until it is finished.",
 			UserBlockingActivity.class
+		),
+
+		new Example(
+			"Fragment Exploration",
+			"Tests out adding, removing and re-creating fragments.",
+			FragmentAttachment.class
 		)
 	};
 
