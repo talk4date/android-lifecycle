@@ -17,6 +17,7 @@ import com.talk4date.android.lifecycle.sample.activity.SingleRandomNumberActivit
 import com.talk4date.android.lifecycle.sample.activity.TimingActivity;
 import com.talk4date.android.lifecycle.sample.activity.TimingSessionLifecycleActivity;
 import com.talk4date.android.lifecycle.sample.activity.UserBlockingActivity;
+import com.talk4date.android.lifecycle.sample.fragment.CachingCalculatorFragment;
 import com.talk4date.android.lifecycle.sample.fragment.FragmentAttachment;
 import com.talk4date.android.lifecycle.sample.fragment.SingleRandomNumberFragment;
 
@@ -70,6 +71,13 @@ public class MainActivity extends Activity {
 			"Fetches a random number on start and a new one every time the button is pressed",
 			SingleRandomNumberFragment.class
 		),
+
+		new Example(
+			"Fragment: Caching Calculator",
+			"After a long running calculation updates a label. " +
+					"The result of the calculation is cached in the service.",
+			CachingCalculatorFragment.class
+		)
 	};
 
 	@Override
