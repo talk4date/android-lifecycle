@@ -35,17 +35,17 @@ public class ActivityLifecycle extends ActivityBasedLifecycle {
 	 *
 	 * @param activity The activity for which to get the activity session lifecycle.
 	 */
-	public static ActivityLifecycle activitySessionLifecycle(Activity activity) {
+	public static ActivityLifecycle sessionLifecycle(Activity activity) {
 		return lifecycle(activity, true, TAG_ACTIVITY_SESSION_LIFECYCLE_FRAGMENT);
 	}
 
 	/**
-	 * Get the simple lifecycle for the given activity.
+	 * Get the instance lifecycle for the given activity.
 	 * The returned lifecycle will be destroyed on configuration changes.
 	 *
-	 * @param activity The activity for which to get the activity lifecycle.
+	 * @param activity The activity for which to get the instance lifecycle.
 	 */
-	public static ActivityLifecycle activityLifecycle(Activity activity) {
+	public static ActivityLifecycle instanceLifecycle(Activity activity) {
 		return lifecycle(activity, false, TAG_ACTIVITY_LIFECYCLE_FRAGMENT);
 	}
 

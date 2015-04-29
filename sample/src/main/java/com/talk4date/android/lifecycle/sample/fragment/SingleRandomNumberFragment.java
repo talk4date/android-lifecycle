@@ -58,7 +58,7 @@ public class SingleRandomNumberFragment extends BaseLifecycleDispatchingFragment
 			lastResult = savedInstanceState.getInt(INSTANCE_STATE_LAST_RESULT);
 		}
 
-		FragmentLifecycle lifecycle = FragmentLifecycle.fragmentSessionLifecycle(this);
+		FragmentLifecycle lifecycle = FragmentLifecycle.sessionLifecycle(this);
 
 		randomNumberReceiver = lifecycle.registerListener("randomNumber", true, new EventListener<Integer>() {
 			@Override

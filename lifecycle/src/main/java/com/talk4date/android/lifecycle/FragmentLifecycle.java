@@ -19,7 +19,7 @@ import static com.talk4date.android.lifecycle.FragmentLifecycleType.*;
  * A lifecycle of a fragment.
  *
  * There are two types of lifecycles: the instance and the session lifecycles.
- * For a detailed description see {@link #fragmentSessionLifecycle(android.app.Fragment)} and
+ * For a detailed description see {@link #sessionLifecycle(android.app.Fragment)} and
  * {@link #instanceLifecycle(android.app.Fragment)}.
  */
 public class FragmentLifecycle extends ActivityBasedLifecycle {
@@ -90,7 +90,7 @@ public class FragmentLifecycle extends ActivityBasedLifecycle {
 	 *
 	 * @param fragment The fragment for which to get the lifecycle.
 	 */
-	public static FragmentLifecycle fragmentSessionLifecycle(Fragment fragment) {
+	public static FragmentLifecycle sessionLifecycle(Fragment fragment) {
 		logStatistics();
 		return lifecycle(SESSION, fragment);
 	}

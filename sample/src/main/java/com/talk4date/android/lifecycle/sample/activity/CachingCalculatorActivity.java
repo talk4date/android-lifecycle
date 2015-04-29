@@ -29,7 +29,7 @@ public class CachingCalculatorActivity extends Activity {
 		// Since the service caches the result we can use the short lived lifecycle
 		// and we don't need to store anything in instance state.
 		// We just request the result from the service all the time.
-		ActivityLifecycle lifecycle = ActivityLifecycle.activityLifecycle(this);
+		ActivityLifecycle lifecycle = ActivityLifecycle.instanceLifecycle(this);
 		EventReceiver<Integer> resultListener = lifecycle.registerListener("result", true, new EventListener<Integer>() {
 			@Override
 			public void onEvent(Integer result) {
