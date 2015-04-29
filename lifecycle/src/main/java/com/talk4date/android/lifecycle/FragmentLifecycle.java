@@ -20,9 +20,15 @@ import java.util.UUID;
  * The lifecycle can either be retained across configuration changes (FragmentSession)
  * or die directly together with the fragment on every configuration change.
  *
+ * When the fragment is actively removed from the fragment manager, the lifecycle is destroyed.
+ * However when it's state is saved (like for example FragmentStatePagerAdapter does)
+ * it will be restored later when a fragment with the same state is recreated.
+ *
  * The lifecycle will always be destroyed when the fragment is finished.
  */
 public class FragmentLifecycle extends ActivityBasedLifecycle {
+
+	private static final Logger log = LoggerFactory.getLogger(FragmentLifecycle.class);
 
 	/**
 	 * An id that is unique for the current process.
@@ -58,6 +64,11 @@ public class FragmentLifecycle extends ActivityBasedLifecycle {
 
 
 	public static FragmentLifecycle fragmentSessionLifecycle(Fragment fragment) {
+		if (log.isDebugEnabled()) {
+			log.debug("Current fragment to id mappings: {}", fragmentToId.size());
+			log.debug("Current session lifecycles: {}", idToSessionLifecycle.size());
+		}
+
 		String id = fragmentToId.get(fragment);
 		if (id == null) {
 			throw new IllegalStateException("Fragment was not registered. " +
@@ -111,11 +122,6 @@ public class FragmentLifecycle extends ActivityBasedLifecycle {
 
 				lifecycle.newLifecycle = false;
 			}
-
-			if (log.isDebugEnabled()) {
-				log.debug("Current fragment to id mappings: {}", fragmentToId.size());
-				log.debug("Current session lifecycles: {}", idToSessionLifecycle.size());
-			}
 		}
 
 		@Override
@@ -130,8 +136,15 @@ public class FragmentLifecycle extends ActivityBasedLifecycle {
 
 		@Override
 		public void onFragmentDestroy(Fragment fragment) {
-			fragmentSessionLifecycle(fragment).invalidateEventListeners();
-			fragmentToId.remove(fragment);
+			FragmentLifecycle lifecycle = fragmentSessionLifecycle(fragment);
+			String id = fragmentToId.remove(fragment);
+
+			if (fragment.isRemoving() || fragment.getActivity().isFinishing()) {
+				idToSessionLifecycle.remove(id);
+				lifecycle.destroy();
+			} else {
+				lifecycle.invalidateEventListeners();
+			}
 		}
 
 		@Override
