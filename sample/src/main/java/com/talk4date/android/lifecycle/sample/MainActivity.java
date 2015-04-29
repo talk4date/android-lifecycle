@@ -11,16 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.talk4date.android.lifecycle.sample.R;
 import com.talk4date.android.lifecycle.sample.activity.CachingCalculatorActivity;
-import com.talk4date.android.lifecycle.sample.activity.FragmentHostingActivity;
+import com.talk4date.android.lifecycle.sample.activity.SingleFragmentActivity;
 import com.talk4date.android.lifecycle.sample.activity.SingleRandomNumberActivity;
 import com.talk4date.android.lifecycle.sample.activity.TimingActivity;
 import com.talk4date.android.lifecycle.sample.activity.TimingSessionLifecycleActivity;
 import com.talk4date.android.lifecycle.sample.activity.UserBlockingActivity;
 import com.talk4date.android.lifecycle.sample.fragment.FragmentAttachment;
 import com.talk4date.android.lifecycle.sample.fragment.SingleRandomNumberFragment;
-import com.talk4date.android.lifecycle.sample.service.CachingCalculatorService;
 
 /**
  * Activity that lists all examples.
@@ -156,8 +154,8 @@ public class MainActivity extends Activity {
 			if (example.activity != null) {
 				launchExampleIntent = new Intent(v.getContext(), example.activity);
 			} else if (example.fragment != null) {
-				launchExampleIntent = new Intent(v.getContext(), FragmentHostingActivity.class);
-				launchExampleIntent.putExtra(FragmentHostingActivity.EXTRA_FRAGMENT_CLASS, example.fragment.getCanonicalName());
+				launchExampleIntent = new Intent(v.getContext(), SingleFragmentActivity.class);
+				launchExampleIntent.putExtra(SingleFragmentActivity.EXTRA_FRAGMENT_CLASS, example.fragment.getCanonicalName());
 			}
 
 			v.getContext().startActivity(launchExampleIntent);

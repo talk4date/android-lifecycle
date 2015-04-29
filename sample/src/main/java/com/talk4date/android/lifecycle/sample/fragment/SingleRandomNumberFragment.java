@@ -12,6 +12,7 @@ import com.talk4date.android.lifecycle.EventListener;
 import com.talk4date.android.lifecycle.EventReceiver;
 import com.talk4date.android.lifecycle.sample.R;
 import com.talk4date.android.lifecycle.sample.service.RandomNumberService;
+import com.talk4date.android.lifecycle.sample.utils.MessageDialogFragment;
 import com.talk4date.android.lifecycle.ui.BaseLifecycleDispatchingFragment;
 import com.talk4date.android.lifecycle.FragmentLifecycle;
 
@@ -64,6 +65,7 @@ public class SingleRandomNumberFragment extends BaseLifecycleDispatchingFragment
 			public void onEvent(Integer number) {
 				lastResult = number;
 				bindView();
+				new MessageDialogFragment().withMessage(String.valueOf(number)).show(getFragmentManager(), "randomDialog");
 			}
 		});
 

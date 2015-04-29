@@ -99,7 +99,7 @@ public class SingleRandomNumberActivity extends Activity {
 
 					// We can even create a fragment transaction without further handling.
 					// The lifecycle makes sure that this will only be executed while resumed.
-					new MessageDialogFragment().withMessage("" + number).show(getFragmentManager(), "randomDialog");
+					new MessageDialogFragment().withMessage(String.valueOf(number)).show(getFragmentManager(), "randomDialog");
 				}
 			});
 
