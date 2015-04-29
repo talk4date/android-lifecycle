@@ -9,22 +9,18 @@ import com.talk4date.android.lifecycle.callbacks.FragmentLifecycleCallbacks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import static com.talk4date.android.lifecycle.FragmentLifecycleType.*;
 
 /**
  * A lifecycle of a fragment.
- * It is active only when the fragment is resumed.
  *
- * The lifecycle can either be retained across configuration changes (FragmentSession)
- * or die directly together with the fragment on every configuration change.
- *
- * When the fragment is actively removed from the fragment manager, the lifecycle is destroyed.
- * However when it's state is saved (like for example FragmentStatePagerAdapter does)
- * it will be restored later when a fragment with the same state is recreated.
- *
- * The lifecycle will always be destroyed when the fragment is finished.
+ * There are two types of lifecycles: the instance and the session lifecycles.
+ * For a detailed description see {@link #fragmentSessionLifecycle(android.app.Fragment)} and
+ * {@link #instanceLifecycle(android.app.Fragment)}.
  */
 public class FragmentLifecycle extends ActivityBasedLifecycle {
 
@@ -56,31 +52,73 @@ public class FragmentLifecycle extends ActivityBasedLifecycle {
 	private static Map<Fragment, String> fragmentToId = new HashMap<>();
 
 	/**
-	 * Existing fragment lifecycles for all fragment ids.
+	 * All existing fragment lifecycles.
+	 * Mapped type -> id -> lifecycle.
 	 *
-	 * TODO: we still maintain old lifecycles. We need to properly destroy the lifecycle when it comes to an end.
+	 * The current implementation eagerly creates and manages the session and instance lifecycle.
+	 * We could probably safe some memory when we only track the current fragment states and create lifecycles on demand.
 	 */
-	private static Map<String, FragmentLifecycle> idToSessionLifecycle = new HashMap<>();
+	private static EnumMap<FragmentLifecycleType, Map<String, FragmentLifecycle>> lifecycles;
 
-
-	public static FragmentLifecycle fragmentSessionLifecycle(Fragment fragment) {
-		if (log.isDebugEnabled()) {
-			log.debug("Current fragment to id mappings: {}", fragmentToId.size());
-			log.debug("Current session lifecycles: {}", idToSessionLifecycle.size());
+	static {
+		lifecycles = new EnumMap<>(FragmentLifecycleType.class);
+		for (FragmentLifecycleType type : FragmentLifecycleType.values()) {
+			lifecycles.put(type, new HashMap<String, FragmentLifecycle>());
 		}
+	}
 
+	/**
+	 * The instance lifecycle is directly tied to the fragment instance and destroyed when the instance is destroyed.
+	 * It is only active when the fragment is in resumed state.
+	 *
+	 * @param fragment The fragment for which to get the lifecycle.
+	 */
+	public static FragmentLifecycle instanceLifecycle(Fragment fragment) {
+		logStatistics();
+		return lifecycle(INSTANCE, fragment);
+	}
+
+	/**
+	 * The session lifecycle is retained across configuration changes and app kills.
+	 * It is only active when the fragment is in resumed state.
+	 *
+	 * When the fragments hosting activity is destroyed, the lifecycle is destroyed too.
+	 *
+	 * When the fragment is actively removed from the activities fragment manager, the lifecycle is destroyed too.
+	 * However when it's state is saved like for example FragmentStatePagerAdapter does,
+	 * it will be restored later when a fragment with the same state is recreated.
+	 *
+	 * @param fragment The fragment for which to get the lifecycle.
+	 */
+	public static FragmentLifecycle fragmentSessionLifecycle(Fragment fragment) {
+		logStatistics();
+		return lifecycle(SESSION, fragment);
+	}
+
+	/**
+	 * Get the lifecycle for the given type and fragment.
+	 */
+	private static FragmentLifecycle lifecycle(FragmentLifecycleType type, Fragment fragment) {
 		String id = fragmentToId.get(fragment);
 		if (id == null) {
 			throw new IllegalStateException("Fragment was not registered. " +
 					"Are you sure that the FragmentLifecycle callbacks are registered correctly?");
 		}
 
-		FragmentLifecycle lifecycle = idToSessionLifecycle.get(fragmentToId.get(fragment));
+		FragmentLifecycle lifecycle = lifecycles.get(type).get(fragmentToId.get(fragment));
 		if (lifecycle == null) {
 			throw new IllegalStateException("Lifecycle was null, caused probably a bug in FragmentLifecycle.");
 		}
 
 		return lifecycle;
+	}
+
+	private static void logStatistics() {
+		if (log.isDebugEnabled()) {
+			log.debug("Current fragment to id mappings: {}", fragmentToId.size());
+			log.debug("Current session lifecycles: {}", lifecycles.get(SESSION).size());
+			log.debug("Current instance lifecycles: {}", lifecycles.get(INSTANCE).size());
+		}
 	}
 
 	/**
@@ -94,57 +132,76 @@ public class FragmentLifecycle extends ActivityBasedLifecycle {
 
 		@Override
 		public void onFragmentCreate(Fragment fragment, Bundle savedInstanceState) {
-			// new fragment -> new lifecycle
+			Map<String, FragmentLifecycle> sessionLifecycles = lifecycles.get(SESSION);
+			Map<String, FragmentLifecycle> instanceLifecycles = lifecycles.get(INSTANCE);
+
+			// new fragment -> new lifecycles
 			if (savedInstanceState == null) {
 				String id = newFragmentId();
 				fragmentToId.put(fragment, id);
-				idToSessionLifecycle.put(id, new FragmentLifecycle());
-			// existing fragment id -> existing lifecycle
+
+				sessionLifecycles.put(id, new FragmentLifecycle());
+				instanceLifecycles.put(id, new FragmentLifecycle());
+			// existing fragment id
 			} else {
 				String id = savedInstanceState.getString(STATE_LIFECYCLE_ID);
 				if (id == null) {
 					throw new IllegalArgumentException("Missing fragment id in instance state of fragment.");
 				}
-
 				fragmentToId.put(fragment, id);
 
-				FragmentLifecycle lifecycle;
-				// existing lifecycle
-				if (idToSessionLifecycle.containsKey(id)) {
-					lifecycle = idToSessionLifecycle.get(id);
-					lifecycle.restored = false;
-				// restored lifecycle
+				// instance lifecycle is always new
+				instanceLifecycles.put(id, new FragmentLifecycle());
+
+				// session lifecycle might still exist
+				FragmentLifecycle sessionLifecycle;
+
+				if (sessionLifecycles.containsKey(id)) {
+					// existing lifecycle
+					sessionLifecycle = sessionLifecycles.get(id);
+					sessionLifecycle.restored = false;
 				} else {
-					lifecycle = new FragmentLifecycle();
-					lifecycle.restored = true;
-					idToSessionLifecycle.put(id, lifecycle);
+					// restored lifecycle
+					sessionLifecycle = new FragmentLifecycle();
+					sessionLifecycle.restored = true;
+					sessionLifecycles.put(id, sessionLifecycle);
 				}
 
-				lifecycle.newLifecycle = false;
+				sessionLifecycle.newLifecycle = false;
 			}
 		}
 
 		@Override
 		public void onFragmentResume(Fragment fragment) {
-			fragmentSessionLifecycle(fragment).setActive(true);
+			lifecycle(SESSION, fragment).setActive(true);
+			lifecycle(INSTANCE, fragment).setActive(true);
 		}
 
 		@Override
 		public void onFragmentPause(Fragment fragment) {
-			fragmentSessionLifecycle(fragment).setActive(false);
+			lifecycle(SESSION, fragment).setActive(false);
+			lifecycle(INSTANCE, fragment).setActive(false);
 		}
 
 		@Override
 		public void onFragmentDestroy(Fragment fragment) {
-			FragmentLifecycle lifecycle = fragmentSessionLifecycle(fragment);
-			String id = fragmentToId.remove(fragment);
+			String id = fragmentToId.get(fragment);
+
+			// instance lifecycles are always destroyed
+			lifecycles.get(INSTANCE).remove(id);
+
+			// session lifecycles are either destroyed or listeners got invalid
+			FragmentLifecycle sessionLifecycle = lifecycle(SESSION, fragment);
 
 			if (fragment.isRemoving() || fragment.getActivity().isFinishing()) {
-				idToSessionLifecycle.remove(id);
-				lifecycle.destroy();
+				lifecycles.get(SESSION).remove(id);
+				sessionLifecycle.destroy();
 			} else {
-				lifecycle.invalidateEventListeners();
+				sessionLifecycle.invalidateEventListeners();
 			}
+
+			// remove the fragment to id mapping
+			fragmentToId.remove(fragment);
 		}
 
 		@Override

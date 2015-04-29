@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
  * or die directly together with the activity on every configuration change.
  *
  * The lifecycle internally is represented by a worker fragment.
+ * TODO: currently not supported simultaneous session and instance lifecycle.
  */
 public class ActivityLifecycle extends ActivityBasedLifecycle {
 
