@@ -20,6 +20,8 @@ import com.talk4date.android.lifecycle.sample.activity.UserBlockingActivity;
 import com.talk4date.android.lifecycle.sample.fragment.CachingCalculatorFragment;
 import com.talk4date.android.lifecycle.sample.fragment.FragmentAttachment;
 import com.talk4date.android.lifecycle.sample.fragment.SingleRandomNumberFragment;
+import com.talk4date.android.lifecycle.sample.fragment.TimingSessionLifecycleFragment;
+import com.talk4date.android.lifecycle.sample.fragment.UserBlockingFragment;
 
 /**
  * Activity that lists all examples.
@@ -77,7 +79,20 @@ public class MainActivity extends Activity {
 			"After a long running calculation updates a label. " +
 					"The result of the calculation is cached in the service.",
 			CachingCalculatorFragment.class
-		)
+		),
+
+		new Example(
+			"Fragment: User Blocking Sender",
+			"Send some data to a fake server and block the user until it is finished.",
+			UserBlockingFragment.class
+		),
+
+		new Example(
+				"Fragment: Timing Service Session Lifecycle",
+				"Updates a label with the time past since a service was created. " +
+						"Uses the session ActivityLifecycle.",
+				TimingSessionLifecycleFragment.class
+		),
 	};
 
 	@Override

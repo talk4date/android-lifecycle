@@ -13,9 +13,6 @@ import com.talk4date.android.lifecycle.sample.service.TimingService;
 /**
  * Activity which shows the elapsed time since the timing service was created.
  * It uses the session lifecycle and drops events while paused.
- *
- * FIXME: There is currently no way to unregister the receiver when the lifecycle is destroyed.
- * We need a lifecycle destroy event.
  */
 public class TimingSessionLifecycleActivity extends Activity {
 
