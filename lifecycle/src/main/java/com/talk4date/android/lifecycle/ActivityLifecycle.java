@@ -137,9 +137,21 @@ public class ActivityLifecycle extends ActivityBasedLifecycle {
 		@Override
 		public void onDetach() {
 			super.onDetach();
-			log.trace("detach -> invalidating event listeners");
-			lifecycle.invalidateEventListeners();
+			log.trace("onDetach");
 			configured = false;
+
+			if (getRetainInstance()) {
+				if (getActivity().isFinishing()) {
+					log.debug("destroying session lifecycle because activity is finishing");
+					lifecycle.destroy();
+				} else {
+					log.debug("invalidating event listeners");
+					lifecycle.invalidateEventListeners();
+				}
+			} else {
+				log.trace("destroying instance lifecycle because activity is destroyed");
+				lifecycle.destroy();
+			}
 		}
 
 		@Override
