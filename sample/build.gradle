@@ -5,7 +5,7 @@ android {
 	buildToolsVersion "21.1.2"
 
 	defaultConfig {
-		applicationId "android.example.com.uicommunication"
+		applicationId "com.talk4date.android.lifecycle.sample"
 		minSdkVersion 14
 		targetSdkVersion 21
 		versionCode 1
