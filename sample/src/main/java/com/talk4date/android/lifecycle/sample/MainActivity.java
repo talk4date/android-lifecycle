@@ -18,7 +18,6 @@ import com.talk4date.android.lifecycle.sample.activity.TimingActivity;
 import com.talk4date.android.lifecycle.sample.activity.TimingSessionLifecycleActivity;
 import com.talk4date.android.lifecycle.sample.activity.UserBlockingActivity;
 import com.talk4date.android.lifecycle.sample.fragment.CachingCalculatorFragment;
-import com.talk4date.android.lifecycle.sample.fragment.FragmentAttachment;
 import com.talk4date.android.lifecycle.sample.fragment.SingleRandomNumberFragment;
 import com.talk4date.android.lifecycle.sample.fragment.TimingSessionLifecycleFragment;
 import com.talk4date.android.lifecycle.sample.fragment.UserBlockingFragment;
@@ -60,12 +59,6 @@ public class MainActivity extends Activity {
 			"Activity: User Blocking Sender",
 			"Send some data to a fake server and block the user until it is finished.",
 			UserBlockingActivity.class
-		),
-
-		new Example(
-			"Activity: Fragment Exploration",
-			"Tests out adding, removing and re-creating fragments.",
-			FragmentAttachment.class
 		),
 
 		new Example(
