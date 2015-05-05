@@ -28,7 +28,7 @@ public class UserBlockingActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_user_blocking);
 
-		ActivityLifecycle lifecycle = ActivityLifecycle.activitySessionLifecycle(this);
+		ActivityLifecycle lifecycle = ActivityLifecycle.sessionLifecycle(this);
 
 		this.button = (Button)findViewById(R.id.button);
 		this.dialog = (MessageDialogFragment) getFragmentManager().findFragmentByTag(TAG_DIALOG);

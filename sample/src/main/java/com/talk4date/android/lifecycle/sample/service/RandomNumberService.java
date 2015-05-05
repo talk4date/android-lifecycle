@@ -52,7 +52,7 @@ public class RandomNumberService {
 		handler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				log.debug("finished random number with id ", id);
+				log.debug("finished random number with id {}", id);
 				receiver.postEvent(random.nextInt());
 			}
 		}, delayInSeconds * 1000);

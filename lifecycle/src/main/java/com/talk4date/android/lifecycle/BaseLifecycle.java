@@ -7,13 +7,19 @@ import java.util.Map;
 
 /**
  * Abstract base class for implementing lifecycles.
+ * Implements event dispatching and listener registration.
  */
 public abstract class BaseLifecycle implements Lifecycle {
 
 	/**
 	 * Listeners that get notified when the active state changes.
 	 */
-	private List<Runnable> activeChangeListeners = new LinkedList<>();
+	private List<ActiveChangeListener> activeChangeListeners = new LinkedList<>();
+
+	/**
+	 * Listeners that get notified when the the lifecycle is destroyed.
+	 */
+	private List<OnDestroyListener> onDestroyListeners = new LinkedList<>();
 
 	/**
 	 * All LifecycleEventDispatchers by tag.
@@ -26,13 +32,9 @@ public abstract class BaseLifecycle implements Lifecycle {
 	private boolean active = false;
 
 	/**
-	 * Notifies all active change listeners about a change.
+	 * If the lifecycle is destroyed.
 	 */
-	private void notifyActiveChangeListeners() {
-		for (Runnable listener : activeChangeListeners) {
-			listener.run();
-		}
-	}
+	private boolean destroyed = false;
 
 	/**
 	 * Set the lifecycle active / inactive.
@@ -40,28 +42,34 @@ public abstract class BaseLifecycle implements Lifecycle {
 	protected void setActive(boolean active) {
 		if (this.active != active) {
 			this.active = active;
-			notifyActiveChangeListeners();
+			for (ActiveChangeListener listener : activeChangeListeners) {
+				listener.onActiveChange(active);
+			}
 		}
-	}
-
-	@Override
-	public void addActiveChangeListener(Runnable listener) {
-		this.activeChangeListeners.add(listener);
-	}
-
-	@Override
-	public boolean isActive() {
-		return active;
 	}
 
 	/**
 	 * Sets all event listeners to null.
 	 * Use this to mark event listeners as invalid.
-	 * The need to be re-registered again with registerListener later.
+	 * They need to be re-registered again with registerListener later.
+	 *
+	 * Subclasses must call this when event listeners get invalid.
 	 */
 	protected void invalidateEventListeners() {
 		for (LifecycleEventDispatcher<?> dispatcher : eventDispatchers.values()) {
 			dispatcher.setListener(null);
+		}
+	}
+
+	/**
+	 * Subclasses must call this when the lifecycle is destroyed.
+	 * This automatically invalidates all listeners, so no extra call to invalidateEventListeners is needed.
+	 */
+	protected void destroy() {
+		this.destroyed = true;
+		invalidateEventListeners();
+		for (OnDestroyListener listener : onDestroyListeners) {
+			listener.onDestroy();
 		}
 	}
 
@@ -76,5 +84,35 @@ public abstract class BaseLifecycle implements Lifecycle {
 
 		eventDispatcher.setListener(listener);
 		return eventDispatcher;
+	}
+
+	@Override
+	public void addActiveChangeListener(ActiveChangeListener listener) {
+		this.activeChangeListeners.add(listener);
+	}
+
+	@Override
+	public void removeActiveChangeListener(ActiveChangeListener listener) {
+		this.activeChangeListeners.remove(listener);
+	}
+
+	@Override
+	public void addOnDestroyListener(OnDestroyListener listener) {
+		this.onDestroyListeners.add(listener);
+	}
+
+	@Override
+	public void removeOnDestroyListener(OnDestroyListener listener) {
+		this.onDestroyListeners.remove(listener);
+	}
+
+	@Override
+	public boolean isActive() {
+		return active;
+	}
+
+	@Override
+	public boolean isDestroyed() {
+		return destroyed;
 	}
 }

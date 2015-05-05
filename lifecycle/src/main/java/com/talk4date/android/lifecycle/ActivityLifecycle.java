@@ -9,29 +9,20 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A lifecycle of an activity.
- * It is inactive when the activity is paused.
+ * It is active only when the activity is resumed.
  *
  * The lifecycle can either be retained across configuration changes (ActivitySession)
  * or die directly together with the activity on every configuration change.
  *
  * The lifecycle internally is represented by a worker fragment.
+ * TODO: currently not supported simultaneous session and instance lifecycle.
  */
-public class ActivityLifecycle extends BaseLifecycle {
+public class ActivityLifecycle extends ActivityBasedLifecycle {
 
 	private static final Logger log = LoggerFactory.getLogger(ActivityLifecycle.class);
 
 	private static final String TAG_ACTIVITY_SESSION_LIFECYCLE_FRAGMENT = "ACTIVITY_SESSION_LIFECYCLE_FRAGMENT";
 	private static final String TAG_ACTIVITY_LIFECYCLE_FRAGMENT = "ACTIVITY_LIFECYCLE_FRAGMENT";
-
-	/**
-	 * @see #isRestored()
-	 */
-	private boolean restored = false;
-
-	/**
-	 * Flag indicating if this lifecycle was created for the current activity.
-	 */
-	private boolean newLifecycle = true;
 
 	/**
 	 * Private constructor. Use #sessionLifecylce to obtain instances.
@@ -44,17 +35,17 @@ public class ActivityLifecycle extends BaseLifecycle {
 	 *
 	 * @param activity The activity for which to get the activity session lifecycle.
 	 */
-	public static ActivityLifecycle activitySessionLifecycle(Activity activity) {
+	public static ActivityLifecycle sessionLifecycle(Activity activity) {
 		return lifecycle(activity, true, TAG_ACTIVITY_SESSION_LIFECYCLE_FRAGMENT);
 	}
 
 	/**
-	 * Get the simple lifecycle for the given activity.
+	 * Get the instance lifecycle for the given activity.
 	 * The returned lifecycle will be destroyed on configuration changes.
 	 *
-	 * @param activity The activity for which to get the activity lifecycle.
+	 * @param activity The activity for which to get the instance lifecycle.
 	 */
-	public static ActivityLifecycle activityLifecycle(Activity activity) {
+	public static ActivityLifecycle instanceLifecycle(Activity activity) {
 		return lifecycle(activity, false, TAG_ACTIVITY_LIFECYCLE_FRAGMENT);
 	}
 
@@ -86,30 +77,6 @@ public class ActivityLifecycle extends BaseLifecycle {
 		fragment.configured = true;
 		log.trace("lifecycle fragment {}", fragment);
 		return fragment.lifecycle;
-	}
-
-
-	/**
-	 * Indicates if the lifecycle was restored - the session was resumed although the process was destroyed and recreated.
-	 * If this is true, we might have lost events, because we store events only within the process.
-	 */
-	public boolean isRestored() {
-		return restored;
-	}
-
-	/**
-	 * Lifecycle was just created for the currently active activity instance.
-	 */
-	public boolean isNew() {
-		return newLifecycle;
-	}
-
-	/**
-	 * This method allows callers to have one method to check if callback objects might have been lost.
-	 * @return true if either {@link #isNew()} or {@link #isRestored()} is true.
-	 */
-	public boolean isNewOrRestored() {
-		return isNew() || isRestored();
 	}
 
 	/**
@@ -170,9 +137,21 @@ public class ActivityLifecycle extends BaseLifecycle {
 		@Override
 		public void onDetach() {
 			super.onDetach();
-			log.trace("detach -> invalidating event listeners");
-			lifecycle.invalidateEventListeners();
+			log.trace("onDetach");
 			configured = false;
+
+			if (getRetainInstance()) {
+				if (getActivity().isFinishing()) {
+					log.debug("destroying session lifecycle because activity is finishing");
+					lifecycle.destroy();
+				} else {
+					log.debug("invalidating event listeners");
+					lifecycle.invalidateEventListeners();
+				}
+			} else {
+				log.trace("destroying instance lifecycle because activity is destroyed");
+				lifecycle.destroy();
+			}
 		}
 
 		@Override

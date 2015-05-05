@@ -77,7 +77,7 @@ public class SingleRandomNumberActivity extends Activity {
 		log.trace("onCreate activity {}", id);
 
 		// Get the activity session lifecycle for this activity.
-		ActivityLifecycle lifecycle = ActivityLifecycle.activitySessionLifecycle(this);
+		ActivityLifecycle lifecycle = ActivityLifecycle.sessionLifecycle(this);
 
 		setContentView(R.layout.activity_single_random_number);
 
@@ -99,7 +99,7 @@ public class SingleRandomNumberActivity extends Activity {
 
 					// We can even create a fragment transaction without further handling.
 					// The lifecycle makes sure that this will only be executed while resumed.
-					new MessageDialogFragment().withMessage("" + number).show(getFragmentManager(), "randomDialog");
+					new MessageDialogFragment().withMessage(String.valueOf(number)).show(getFragmentManager(), "randomDialog");
 				}
 			});
 

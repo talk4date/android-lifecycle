@@ -25,7 +25,7 @@ public class TimingActivity extends Activity {
 		setContentView(R.layout.activity_timing);
 		final TextView timeLabel = (TextView) findViewById(R.id.elapsedTime);
 
-		ActivityLifecycle lifecycle = ActivityLifecycle.activityLifecycle(this);
+		ActivityLifecycle lifecycle = ActivityLifecycle.instanceLifecycle(this);
 		EventReceiver<Long> timeListener = lifecycle.registerListener("time", false, new EventListener<Long>() {
 			@Override
 			public void onEvent(Long time) {

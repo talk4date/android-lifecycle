@@ -44,12 +44,21 @@ public class TimingService {
 
 	/**
 	 * Add a receiver who gets the new time in seconds every second.
-	 * To unregister the receiver use {@link #removeReceiver(EventReceiver)}.
+	 * The receiver is automatically unregistered, when it is destroyed.
+	 *
+	 * To explicitly unregister the receiver use {@link #removeReceiver(EventReceiver)}.
 	 * @param receiver The receiver to notify with new random numbers.
 	 */
 	public void addReceiver(final EventReceiver<Long> receiver) {
 		receivers.add(receiver);
 		log.debug("added receiver - total registered now {}", receivers.size());
+
+		receiver.addOnDestroyListener(new EventReceiver.OnDestroyListener() {
+			@Override
+			public void onDestroy() {
+				removeReceiver(receiver);
+			}
+		});
 
 		// for the first new receiver we need to kick off 1 second loop
 		if (receivers.size() == 1) {

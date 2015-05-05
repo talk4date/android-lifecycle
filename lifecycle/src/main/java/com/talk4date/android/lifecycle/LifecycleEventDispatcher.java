@@ -1,5 +1,6 @@
 package com.talk4date.android.lifecycle;
 
+import android.location.GpsStatus;
 import android.support.annotation.Nullable;
 
 import org.slf4j.Logger;
@@ -7,13 +8,14 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  * An event dispatcher that dispatches events to a listener when its lifecycle is active.
  * @param <T> The type of event for this dispatcher.
  */
-public class LifecycleEventDispatcher<T> implements EventReceiver<T> {
+public class LifecycleEventDispatcher<T> implements EventReceiver<T>, Lifecycle.OnDestroyListener, Lifecycle.ActiveChangeListener {
 
 	private static final Logger log = LoggerFactory.getLogger(LifecycleEventDispatcher.class);
 
@@ -40,21 +42,55 @@ public class LifecycleEventDispatcher<T> implements EventReceiver<T> {
 	private List<T> pendingEvents = new ArrayList<>();
 
 	/**
+	 * List of all on destroy listeners.
+	 */
+	private List<OnDestroyListener> onDestroyListeners = new LinkedList<>();
+
+	/**
+	 * If the lifecycle has been destroyed.
+	 */
+	private boolean destroyed = false;
+
+	/**
 	 * Create a new lifecycle event receiver.
 	 *
 	 * @param lifecycle The lifecycle for this receiver.
-	 * @param storeWhileInactive
+	 * @param storeWhileInactive If events should be stored when the lifecycle is inactive.
 	 */
 	public LifecycleEventDispatcher(Lifecycle lifecycle, boolean storeWhileInactive) {
 		this.lifecycle = lifecycle;
 		this.storeWhileInactive = storeWhileInactive;
 
-		lifecycle.addActiveChangeListener(new Runnable() {
-			@Override
-			public void run() {
-				dispatchPendingIfReady();
-			}
-		});
+		lifecycle.addActiveChangeListener(this);
+		lifecycle.addOnDestroyListener(this);
+	}
+
+	/**
+	 * Lifecycle on active change listener.
+	 */
+	@Override
+	public void onActiveChange(boolean active) {
+		dispatchPendingIfReady();
+	}
+
+	/**
+	 * Lifecycle on destroy listener.
+	 * Propagate to our listeners that we are destroyed.
+	 */
+	@Override
+	public void onDestroy() {
+		this.destroyed = true;
+
+		for (OnDestroyListener listener : onDestroyListeners) {
+			listener.onDestroy();
+		}
+
+		// Long running processes might still have references to us and keep us and alive.
+		// Therefore we give up everything not needed to free all resources as soon as possible.
+		this.lifecycle = null;
+		this.listener = null;
+		this.pendingEvents = null;
+		this.onDestroyListeners.clear();
 	}
 
 	/**
@@ -108,16 +144,33 @@ public class LifecycleEventDispatcher<T> implements EventReceiver<T> {
 	public void postEvent(T event) {
 		log.trace("post event {}", event);
 
-		if (readyForEvent()) {
+		if (destroyed) {
+			log.debug("lifecylce already destroyed, discarding event silently");
+		} else if (readyForEvent()) {
 			log.debug("directly dispatching event {}", event);
 			dispatchEvent(event);
 		} else {
 			if (storeWhileInactive) {
-				log.debug("storing event for later dispatch {}", event);
+				log.debug("lifeycle not ready for event, storing event for later dispatch {}", event);
 				pendingEvents.add(event);
 			} else {
-				log.debug("discarding event silently {}", event);
+				log.debug("lifeycle not ready for event, discarding event silently {}", event);
 			}
 		}
+	}
+
+	@Override
+	public boolean isDestroyed() {
+		return destroyed;
+	}
+
+	@Override
+	public void addOnDestroyListener(OnDestroyListener listener) {
+		this.onDestroyListeners.add(listener);
+	}
+
+	@Override
+	public void removeOnDestroyListener(OnDestroyListener listener) {
+		this.onDestroyListeners.remove(listener);
 	}
 }
