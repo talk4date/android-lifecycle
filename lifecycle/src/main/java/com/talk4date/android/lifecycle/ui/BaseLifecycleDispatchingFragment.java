@@ -1,9 +1,9 @@
 package com.talk4date.android.lifecycle.ui;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +13,7 @@ import com.talk4date.android.lifecycle.callbacks.FragmentLifecycleDispatcher;
 /**
  * Base Fragment that dispatches all events to the {@link com.talk4date.android.lifecycle.callbacks.FragmentLifecycleDispatcher}.
  */
-public class BaseLifecycleDispatchingFragment extends Fragment  {
+public class BaseLifecycleDispatchingFragment extends Fragment {
 
 	private FragmentLifecycleDispatcher dispatcher = FragmentLifecycleDispatcher.get();
 

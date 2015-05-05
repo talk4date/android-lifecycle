@@ -1,19 +1,17 @@
 package com.talk4date.android.lifecycle.sample.activity;
 
-import android.app.Activity;
-
-import com.talk4date.android.lifecycle.sample.service.RandomNumberService;
-import com.talk4date.android.lifecycle.ActivityLifecycle;
-import com.talk4date.android.lifecycle.EventListener;
-import com.talk4date.android.lifecycle.EventReceiver;
-
-import com.talk4date.android.lifecycle.sample.R;
-import com.talk4date.android.lifecycle.sample.utils.MessageDialogFragment;
-
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.talk4date.android.lifecycle.ActivityLifecycle;
+import com.talk4date.android.lifecycle.EventListener;
+import com.talk4date.android.lifecycle.EventReceiver;
+import com.talk4date.android.lifecycle.sample.R;
+import com.talk4date.android.lifecycle.sample.service.RandomNumberService;
+import com.talk4date.android.lifecycle.sample.utils.MessageDialogFragment;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Since all listeners registered at an ActivityLifecycle are guaranteed to execute only when
  * the activity is resumed this works flawlessly in this example.
  */
-public class SingleRandomNumberActivity extends Activity {
+public class SingleRandomNumberActivity extends FragmentActivity {
 
 	private static final Logger log = LoggerFactory.getLogger(SingleRandomNumberActivity.class);
 
@@ -99,7 +97,7 @@ public class SingleRandomNumberActivity extends Activity {
 
 					// We can even create a fragment transaction without further handling.
 					// The lifecycle makes sure that this will only be executed while resumed.
-					new MessageDialogFragment().withMessage(String.valueOf(number)).show(getFragmentManager(), "randomDialog");
+					new MessageDialogFragment().withMessage(String.valueOf(number)).show(getSupportFragmentManager(), "randomDialog");
 				}
 			});
 

@@ -1,8 +1,9 @@
 package com.talk4date.android.lifecycle;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class ActivityLifecycle extends ActivityBasedLifecycle {
 	 *
 	 * @param activity The activity for which to get the activity session lifecycle.
 	 */
-	public static ActivityLifecycle sessionLifecycle(Activity activity) {
+	public static ActivityLifecycle sessionLifecycle(FragmentActivity activity) {
 		return lifecycle(activity, true, TAG_ACTIVITY_SESSION_LIFECYCLE_FRAGMENT);
 	}
 
@@ -45,19 +46,19 @@ public class ActivityLifecycle extends ActivityBasedLifecycle {
 	 *
 	 * @param activity The activity for which to get the instance lifecycle.
 	 */
-	public static ActivityLifecycle instanceLifecycle(Activity activity) {
+	public static ActivityLifecycle instanceLifecycle(FragmentActivity activity) {
 		return lifecycle(activity, false, TAG_ACTIVITY_LIFECYCLE_FRAGMENT);
 	}
 
-	private static ActivityLifecycle lifecycle(Activity activity, boolean retain, String tag) {
+	private static ActivityLifecycle lifecycle(FragmentActivity activity, boolean retain, String tag) {
 		ActivityLifecycleFragment fragment = (ActivityLifecycleFragment)
-				activity.getFragmentManager().findFragmentByTag(tag);
+				activity.getSupportFragmentManager().findFragmentByTag(tag);
 
 		if (fragment == null) {
 			fragment = new ActivityLifecycleFragment().withRetention(retain);
 			fragment.restoredFromFragmentState = false;
 			fragment.lifecycle.newLifecycle = true;
-			activity.getFragmentManager().beginTransaction()
+			activity.getSupportFragmentManager().beginTransaction()
 					.add(fragment, tag)
 					.commit();
 		} else if (retain && !fragment.configured) {

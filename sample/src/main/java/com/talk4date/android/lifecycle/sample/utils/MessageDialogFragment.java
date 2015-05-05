@@ -1,8 +1,9 @@
 package com.talk4date.android.lifecycle.sample.utils;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 
 import com.talk4date.android.lifecycle.sample.activity.SingleRandomNumberActivity;
 
@@ -24,7 +25,7 @@ public class MessageDialogFragment extends DialogFragment {
 		return this;
 	}
 
-	@Override
+	@Override @NonNull
 	public android.app.Dialog onCreateDialog(Bundle savedInstanceState) {
 		return new AlertDialog.Builder(getActivity())
 				.setMessage(getArguments().getString(ARG_MESSAGE)).create();

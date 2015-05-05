@@ -2,6 +2,7 @@ package com.talk4date.android.lifecycle.sample.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 
@@ -15,7 +16,7 @@ import com.talk4date.android.lifecycle.sample.utils.MessageDialogFragment;
 /**
  * Sends a request to the service and blocks the user until there is some response.
  */
-public class UserBlockingActivity extends Activity {
+public class UserBlockingActivity extends FragmentActivity {
 
 	private static final String TAG_DIALOG = "dialog";
 	private Button button;
@@ -31,7 +32,7 @@ public class UserBlockingActivity extends Activity {
 		ActivityLifecycle lifecycle = ActivityLifecycle.sessionLifecycle(this);
 
 		this.button = (Button)findViewById(R.id.button);
-		this.dialog = (MessageDialogFragment) getFragmentManager().findFragmentByTag(TAG_DIALOG);
+		this.dialog = (MessageDialogFragment) getSupportFragmentManager().findFragmentByTag(TAG_DIALOG);
 
 		final EventReceiver<Void> sendDataListener = lifecycle
 				.registerListener("sendData", true, new EventListener<Void>() {
@@ -48,7 +49,7 @@ public class UserBlockingActivity extends Activity {
 				dialog = new MessageDialogFragment()
 						.withMessage("Sending data... please wait.");
 				dialog.setCancelable(false);
-				dialog.show(getFragmentManager(), TAG_DIALOG);
+				dialog.show(getSupportFragmentManager(), TAG_DIALOG);
 				sendDataService.sendDataToServer("Test", sendDataListener);
 			}
 		});

@@ -2,8 +2,9 @@ package com.talk4date.android.lifecycle.sample.activity;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,7 +15,7 @@ import com.talk4date.android.lifecycle.sample.R;
 /**
  * Activity that just hosts one fragment.
  */
-public class SingleFragmentActivity extends Activity {
+public class SingleFragmentActivity extends FragmentActivity {
 
 	public static final String EXTRA_FRAGMENT_CLASS = "EXTRA_FRAGMENT_CLASS";
 
@@ -47,7 +48,7 @@ public class SingleFragmentActivity extends Activity {
 		} else {
 			this.fragmentState = FragmentState.values()[savedInstanceState.getInt(STATE_FRAGMENT_STATE)];
 			this.fragmentClassName = savedInstanceState.getString(STATE_FRAGMENT_CLASS);
-			this.fragment = getFragmentManager().findFragmentByTag(TAG_FRAGMENT);
+			this.fragment = getSupportFragmentManager().findFragmentByTag(TAG_FRAGMENT);
 			bindView();
 		}
 	}
@@ -110,7 +111,7 @@ public class SingleFragmentActivity extends Activity {
 	 */
 	private void attachFragment() {
 		this.fragmentState = FragmentState.ADDED;
-		getFragmentManager().beginTransaction().attach(fragment).commit();
+		getSupportFragmentManager().beginTransaction().attach(fragment).commit();
 		bindView();
 	}
 
@@ -119,7 +120,7 @@ public class SingleFragmentActivity extends Activity {
 	 */
 	private void detachFragment() {
 		this.fragmentState = FragmentState.DETACHED;
-		getFragmentManager().beginTransaction().detach(fragment).commit();
+		getSupportFragmentManager().beginTransaction().detach(fragment).commit();
 		bindView();
 	}
 
@@ -128,7 +129,7 @@ public class SingleFragmentActivity extends Activity {
 	 */
 	private void removeFragment() {
 		this.fragmentState = FragmentState.REMOVED;
-		getFragmentManager().beginTransaction().remove(fragment).commit();
+		getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 		bindView();
 	}
 
@@ -146,7 +147,7 @@ public class SingleFragmentActivity extends Activity {
 			throw new RuntimeException(e);
 		}
 
-		getFragmentManager().beginTransaction().add(R.id.fragment_container, fragment, TAG_FRAGMENT).commit();
+		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment, TAG_FRAGMENT).commit();
 		bindView();
 	}
 }
