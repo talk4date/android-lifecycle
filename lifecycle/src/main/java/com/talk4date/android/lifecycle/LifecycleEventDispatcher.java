@@ -1,6 +1,7 @@
 package com.talk4date.android.lifecycle;
 
-import android.location.GpsStatus;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 
 import org.slf4j.Logger;
@@ -18,6 +19,11 @@ import java.util.List;
 public class LifecycleEventDispatcher<T> implements EventReceiver<T>, Lifecycle.OnDestroyListener, Lifecycle.ActiveChangeListener {
 
 	private static final Logger log = LoggerFactory.getLogger(LifecycleEventDispatcher.class);
+
+	/**
+	 * Handler used to dispatch events on the main thread.
+	 */
+	private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
 	/**
 	 * The lifecycle in which this event receiver forwards events to the listener.
@@ -117,11 +123,20 @@ public class LifecycleEventDispatcher<T> implements EventReceiver<T>, Lifecycle.
 	 * Dispatches the given event to the listener.
 	 * @param event The event to dispatch.
 	 */
-	private void dispatchEvent(T event) {
+	private void dispatchEvent(final T event) {
 		if (listener == null) {
 			throw new IllegalStateException("Tried to dispatch an event while the listener is null");
 		}
-		listener.onEvent(event);
+		if (Looper.myLooper() == Looper.getMainLooper()) {
+			listener.onEvent(event);
+		} else {
+			mainHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					listener.onEvent(event);
+				}
+			});
+		}
 	}
 
 	/**
