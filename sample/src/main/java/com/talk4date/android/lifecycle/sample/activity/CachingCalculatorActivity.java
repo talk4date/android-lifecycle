@@ -1,7 +1,7 @@
 package com.talk4date.android.lifecycle.sample.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.widget.TextView;
 
 import com.talk4date.android.lifecycle.ActivityLifecycle;
@@ -18,7 +18,7 @@ import com.talk4date.android.lifecycle.sample.service.CachingCalculatorService;
  *
  * Therefore the activity should request fresh result from the service when it is recreated.
  */
-public class CachingCalculatorActivity extends Activity {
+public class CachingCalculatorActivity extends FragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

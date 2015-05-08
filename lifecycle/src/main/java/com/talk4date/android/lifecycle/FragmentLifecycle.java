@@ -1,7 +1,7 @@
 package com.talk4date.android.lifecycle;
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.talk4date.android.lifecycle.callbacks.AbstractFragmentLifecycleCallbacks;
 import com.talk4date.android.lifecycle.callbacks.FragmentLifecycleCallbacks;
@@ -19,8 +19,8 @@ import static com.talk4date.android.lifecycle.FragmentLifecycleType.*;
  * A lifecycle of a fragment.
  *
  * There are two types of lifecycles: the instance and the session lifecycles.
- * For a detailed description see {@link #sessionLifecycle(android.app.Fragment)} and
- * {@link #instanceLifecycle(android.app.Fragment)}.
+ * For a detailed description see {@link #sessionLifecycle(android.support.v4.app.Fragment)} and
+ * {@link #instanceLifecycle(android.support.v4.app.Fragment)}.
  */
 public class FragmentLifecycle extends ActivityBasedLifecycle {
 
