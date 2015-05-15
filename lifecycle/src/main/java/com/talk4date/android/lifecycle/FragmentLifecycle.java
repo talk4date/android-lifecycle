@@ -188,7 +188,9 @@ public class FragmentLifecycle extends ActivityBasedLifecycle {
 			String id = fragmentToId.get(fragment);
 
 			// instance lifecycles are always destroyed
+			FragmentLifecycle instanceLifecycle = lifecycle(INSTANCE, fragment);
 			lifecycles.get(INSTANCE).remove(id);
+			instanceLifecycle.destroy();
 
 			// session lifecycles are either destroyed or listeners got invalid
 			FragmentLifecycle sessionLifecycle = lifecycle(SESSION, fragment);
