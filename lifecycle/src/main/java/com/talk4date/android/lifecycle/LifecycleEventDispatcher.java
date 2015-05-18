@@ -120,27 +120,19 @@ public class LifecycleEventDispatcher<T> implements EventReceiver<T>, Lifecycle.
 	}
 
 	/**
-	 * Dispatches the given event to the listener.
+	 * Dispatches the given event to the listener. Must be called on the UI thread.
 	 * @param event The event to dispatch.
 	 */
 	private void dispatchEvent(final T event) {
 		if (listener == null) {
 			throw new IllegalStateException("Tried to dispatch an event while the listener is null");
 		}
-		if (Looper.myLooper() == Looper.getMainLooper()) {
-			listener.onEvent(event);
-		} else {
-			mainHandler.post(new Runnable() {
-				@Override
-				public void run() {
-					listener.onEvent(event);
-				}
-			});
-		}
+		listener.onEvent(event);
 	}
 
 	/**
 	 * Dispatches pending events when the listener is ready to receive events.
+	 * Must be called on the UI thread.
 	 */
 	private void dispatchPendingIfReady() {
 		if (readyForEvent()) {
@@ -156,9 +148,25 @@ public class LifecycleEventDispatcher<T> implements EventReceiver<T>, Lifecycle.
 	}
 
 	@Override
-	public void postEvent(T event) {
+	public void postEvent(final T event) {
 		log.trace("post event {}", event);
+		if (Looper.myLooper() == Looper.getMainLooper()) {
+			postEventSync(event);
+		} else {
+			mainHandler.post(new Runnable() {
+				@Override
+				public void run() {
+					postEventSync(event);
+				}
+			});
+		}
+	}
 
+	/**
+	 * Posts event on the current thread, basically a wrapper used by {@link #postEvent(Object)} to ensure we are
+	 * on the UI thread.
+	 */
+	private void postEventSync(T event) {
 		if (destroyed) {
 			log.debug("lifecylce already destroyed, discarding event silently");
 		} else if (readyForEvent()) {
