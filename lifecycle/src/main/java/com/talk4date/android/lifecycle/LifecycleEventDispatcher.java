@@ -50,7 +50,7 @@ public class LifecycleEventDispatcher<T> implements EventReceiver<T>, Lifecycle.
 	/**
 	 * List of all on destroy listeners.
 	 */
-	private List<OnDestroyListener> onDestroyListeners = new LinkedList<>();
+	private List<OnDestroyListener<T>> onDestroyListeners = new LinkedList<>();
 
 	/**
 	 * If the lifecycle has been destroyed.
@@ -87,8 +87,8 @@ public class LifecycleEventDispatcher<T> implements EventReceiver<T>, Lifecycle.
 	public void onDestroy() {
 		this.destroyed = true;
 
-		for (OnDestroyListener listener : onDestroyListeners) {
-			listener.onDestroy();
+		for (OnDestroyListener<T> listener : onDestroyListeners) {
+			listener.onDestroy(this);
 		}
 
 		// Long running processes might still have references to us and keep us and alive.
@@ -188,12 +188,12 @@ public class LifecycleEventDispatcher<T> implements EventReceiver<T>, Lifecycle.
 	}
 
 	@Override
-	public void addOnDestroyListener(OnDestroyListener listener) {
+	public void addOnDestroyListener(OnDestroyListener<T> listener) {
 		this.onDestroyListeners.add(listener);
 	}
 
 	@Override
-	public void removeOnDestroyListener(OnDestroyListener listener) {
+	public void removeOnDestroyListener(OnDestroyListener<T> listener) {
 		this.onDestroyListeners.remove(listener);
 	}
 }

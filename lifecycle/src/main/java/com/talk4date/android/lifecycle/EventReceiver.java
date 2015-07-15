@@ -23,18 +23,19 @@ public interface EventReceiver<T> {
 	 * Adds a listener that is notified when the event receiver is destroyed.
 	 * @see #isDestroyed()
 	 */
-	void addOnDestroyListener(OnDestroyListener listener);
+	void addOnDestroyListener(OnDestroyListener<T> listener);
 
 	/**
 	 * Removes a previously added destroy listener.
 	 */
-	void removeOnDestroyListener(OnDestroyListener listener);
+	void removeOnDestroyListener(OnDestroyListener<T> listener);
 
-	public static interface OnDestroyListener {
+	public static interface OnDestroyListener<T> {
 
 		/**
 		 * Called when the event receiver is destroyed.
+		 * @param eventReceiver the event receiver which was destroyed.
 		 */
-		void onDestroy();
+		void onDestroy(EventReceiver<T> eventReceiver);
 	}
 }
