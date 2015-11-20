@@ -16,8 +16,6 @@ public interface FragmentLifecycleCallbacks {
 
 	void onFragmentCreate(Fragment fragment, Bundle savedInstanceState);
 
-	void onFragmentCreateView(Fragment fragment, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
-
 	void onFragmentViewCreated(Fragment fragment, View view, Bundle savedInstanceState);
 
 	void onFragmentActivityCreated(Fragment fragment, Bundle savedInstanceState);

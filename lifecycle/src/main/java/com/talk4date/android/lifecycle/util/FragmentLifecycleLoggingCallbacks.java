@@ -36,11 +36,6 @@ public class FragmentLifecycleLoggingCallbacks implements FragmentLifecycleCallb
 	}
 
 	@Override
-	public void onFragmentCreateView(Fragment fragment, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		log(fragment, "onFragmentCreateView");
-	}
-
-	@Override
 	public void onFragmentViewCreated(Fragment fragment, View view, Bundle savedInstanceState) {
 		log(fragment, "onFragmentViewCreated");
 	}

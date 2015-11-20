@@ -29,14 +29,6 @@ public class BaseLifecycleDispatchingFragment extends Fragment {
 		dispatcher.onFragmentCreate(this, savedInstanceState);
 	}
 
-	@Nullable
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = super.onCreateView(inflater, container, savedInstanceState);
-		dispatcher.onFragmentCreateView(this, inflater, container, savedInstanceState);
-		return view;
-	}
-
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
