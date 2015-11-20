@@ -21,9 +21,6 @@ public class AbstractFragmentLifecycleCallbacks implements FragmentLifecycleCall
 	public void onFragmentCreate(Fragment fragment, Bundle savedInstanceState) {}
 
 	@Override
-	public void onFragmentCreateView(Fragment fragment, LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {}
-
-	@Override
 	public void onFragmentViewCreated(Fragment fragment, View view, Bundle savedInstanceState) {}
 
 	@Override
